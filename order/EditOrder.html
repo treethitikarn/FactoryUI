@@ -123,7 +123,8 @@
             <div class="row hide-print">
                 <div class="col-md-12">
                     <input type="submit" class="btn btn-success" value="ตกลง" />
-                    <input type="button" class="btn btn-success" onclick="javascript:window.print()" value="ปริ้น" />
+                    <input type="button" style="margin-left: 5px;" class="btn" value="ยกเลิก" onclick="gotoDashBoard()" />
+                    <input type="button" style="float: right" class="btn btn-success" onclick="javascript:window.print()" value="ปริ้น" />
                 </div>
             </div>
             <div class="row">
@@ -227,6 +228,9 @@
         refreshProduct();
         refreshCustomer();
     });
+    function gotoDashBoard() {
+        window.location.href = 'dashboard.html';
+    }
     function refreshCustomer() {
         $("#customer-body tr").remove();
         var param = {
@@ -462,6 +466,7 @@
             var td = row.getElementsByTagName("td")[0];
             if (td) {
                 if (td.getElementsByTagName("input")[0].value == id) {
+                    console.log("deleteeeeeeeeeeeeeeeeee");
                     document.getElementById("form-product-body").deleteRow(i);
                 }
             }

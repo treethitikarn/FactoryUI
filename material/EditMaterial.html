@@ -38,14 +38,14 @@
         <h1>แก้ไขวัตถุดิบ</h1>
         <form id="material-form" class=".col-md-6 .col-md-offset-3" method="post" action="javascript:editMaterial();">
             <label>รหัสสินค้า: </label><br/>
-            <input type="text" name="materialId" readonly class="form-control" required /><br/>
+            <input type="text" name="materialId" disabled class="form-control" required /><br/>
             <label>ชื่อวัตถุดิบ: </label><br/>
             <input type="text" name="materialName" class="form-control" required /><br/>
             <label>หมวดหมู่: </label><br/>
             <select id="category-selector" class="form-control" name="materialTypeId" required> </select><br/>
             <label>จำนวน: </label><br/>
             <input type="number" name="materialAmount" class="form-control" required /><br/>
-            <input type="submit" class="btn btn-success" value="เพิ่มวัตถุดิบ" />
+            <input type="submit" class="btn btn-success" value="แก้ไขวัตถุดิบ" />
             <input type="button" class="btn" value="ยกเลิก" onclick="gotoDashBoard()" />
         </form>
     </div>
