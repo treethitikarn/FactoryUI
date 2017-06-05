@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bare - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/main.css" rel="stylesheet">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="js/jquery.js"></script>
+    <script src="js/api.js"></script>
+    <script src="component/alert.js"></script>
+    <script>
+        function login() {
+            var loginForm = $('form#login-form'); 
+            post("login", loginForm.serialize(), function (data) {
+                console.log("data: " + data);
+                if (data.status == 0) {
+                    dangerAlert(data.errorMessage);
+                }
+                else {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('isAdmin');
+                    localStorage.removeItem('userId');
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('isAdmin', data.isAdmin);
+                    localStorage.setItem('userId', data.id);
+                    window.location.href = 'product/dashboard.html';
+                }
+            });
+            return false;
+        }
+        function gotoRegister() {
+            window.location.href = 'register.html';
+        }
+        function gotoForgetPwd() {
+            window.location.href = 'forgetpassword.html';
+        }
+
+    </script>
+</head>
+
+<body>
+    <div class="container" style="padding:30px;">
+        <h1>เข้าสู่ระบบ</h1>
+        
+            <div class=".col-md-6 .col-md-offset-3">
+                <form id="login-form" method="post" action="javascript:login();">
+                    <div class="row">
+                    <label>อีเมล: </label><input class="form-control" type="email" name="email" required />
+                    </div>
+                    <div class="row">
+                    <label>รหัสผ่าน: </label><input type="password" class="form-control" name="password" required />
+                    </div>
+                    <div class="row">
+                    <input type="submit" class="btn btn-success" value="เข้าสู่ระบบ" /><input type="button" style="margin-left: 5px" class="btn" value="สมัครสมาชิก"
+                        onclick="gotoRegister()" /><br/>
+                    </div>
+                    <div class="row">
+                    <a href="#" onclick="gotoForgetPwd()">ลืมรหัสผ่าน</a>
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+    <div id="alert-panel" class="alert-panel">
+    </div>
+</body>
+
+</html>

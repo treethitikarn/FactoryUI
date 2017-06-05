@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bare - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 70px;
+            /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <div id="nav"></div>
+    <div class="container">
+         <h1>การผลิตสินค้า</h1>
+        <input type="button" class="btn btn-success" style="float:right;" value="เลือกสินค้า" onclick="openProductPanel()" />
+        <form id="add-amount-form" class=".col-md-6 .col-md-offset-3" method="post" action="javascript:AddProductAmount();">
+            <table class="table">
+                <thead class="">
+                    <tr>
+                        <th>รหัส</th>
+                        <th>ชื่อสินค้า</th>
+                        <th>จำนวนสินค้า</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="form-product-body"></tbody>
+            </table>
+            <input type="submit" class="btn btn-success" value="ตกลง" />
+        </form>
+    </div>
+
+
+    <div id="alert-panel" class="alert-panel">
+    </div>
+    <div class="panel panel-default pop-up" id="product-panel" style="display:none;">
+        <div class="panel-heading">
+            <h3 class="panel-title">สินค้า<a style="float: right;" href="javascript:hideProductPanel()">X</a></h3>
+        </div>
+        <div class="panel-body">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <form class="navbar-form navbar-left" id="search-form" method="post" action="javascript:search();">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="productId" placeholder="รหัสสินค้า">
+                                <input type="text" class="form-control" name="productName" placeholder="ชื่อสินค้า">
+                                <select id="category-selector" class="form-control" name="productTypeId">
+                                    </select>
+                            </div>
+                            <button type="submit" class="btn btn-default">ค้นหา</button>
+                        </form>
+                    </div>
+                    <!-- /.navbar-collapse -->
+                </div>
+                <!-- /.container-fluid -->
+            </nav>
+            <table class="table">
+                <thead class="">
+                    <tr>
+                        <th>รหัสสินค้า</th>
+                        <th>ชื่อสินค้า</th>
+                        <th>หมวดหมู่สินค้า</th>
+                        <th>จำนวนสินค้า</th>
+                    </tr>
+                </thead>
+                <tbody id="product-body"></tbody>
+            </table>
+        </div>
+    </div>
+ <div class="loading" style="display:none"> </div>
+
+
+</body>
+<!-- jQuery Version 1.11.1 -->
+<script src="../js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../component/navigation.js"></script>
+<script src="../component/alert.js"></script>
+
+<script>
+    var productType;
+    $(document).ready(function () {
+        loadNav();
+        refreshProduct();
+
+        // refreshProductType();
+    });
+    function refreshProduct() {
+        $("#product-body tr").remove();
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin")
+        };
+        post("GetProductTypeList", param, function (data1) {
+            productType = data1.data;
+            $('select#category-selector').append($('<option>', {
+                value: "",
+                text: "ทุกหมวดหมู่",
+                name: "productTypeName"
+            }));
+            $("#product-category-body tr").remove();
+            $.each(data1.data, function (i, item) {
+                $('select#category-selector').append($('<option>', {
+                    value: item.id,
+                    text: item.name,
+                    name: "productTypeName"
+                }));
+            });
+            post("GetProductList", param, function (data) {
+                $.each(data.data, function (i, item) {
+                    var type;
+                    $.each(productType, function (j, element) {
+                        if (element.id === item.ProductTypeId) {
+                            console.log(element);
+                            type = element.name;
+                        }
+                    });
+                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;)">' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.Name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.Amount + '</td>' +
+                        '</tr>';
+                    $("#product-body").append(row);
+                });
+            });
+        });
+    }
+    function search() {
+        var form = $('form#search-form');
+        $('form#search-form input[type="hidden"]').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+        post("SearchProduct", form.serialize(), function (data) {
+            if (data.status == 0) {
+                dangerAlert(data.errorMessage);
+            }
+            else {
+                $("#product-body tr").remove();
+                console.log(data.data);
+                $.each(data.data, function (i, item) {
+                    var type;
+                    $.each(productType, function (j, element) {
+                        if (element.id === item.ProductTypeId) {
+                            console.log(element);
+                            type = element.name;
+                        }
+                    });
+                    var iconText = localStorage.getItem("isAdmin") ? '<a class="glyphicon glyphicon-pencil" rhef="" onclick="editProduct(' + item.id + ')"></a><a class="glyphicon glyphicon-trash" rhef="" onclick="deleteProduct(' + item.id + ')"></a>' : '';
+                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.name + '&#39;)">' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.amount + '</td>' +
+                        '</tr>';
+                    $("#product-body").append(row);
+                });
+            }
+        });
+    }
+    function addProductToForm(id, name) {
+        var IsExist = false;
+        $.each($("#form-product-body tr"), function (i, row) {
+            var td = row.getElementsByTagName("td")[0];
+            if (td) {
+                if (td.getElementsByTagName("input")[0].value == id) {
+                    IsExist = true;
+                }
+            }
+        });
+        if (!IsExist) {
+            var iconText = '<a class="glyphicon glyphicon-trash" rhef="" onclick="deleteProduct(' + id + ')"></a>';
+            var row = '<tr>' +
+                '<td><input type="text" class="form-control" readonly value="' + id + '" name="productId[]"/></td>' +
+                '<td><input type="text" class="form-control" readonly value="' + name + '" /></td>' +
+                '<td><input type="number" min="0" class="form-control" name="productAmount[]" required/></td>' +
+                '<td>' + iconText + '</td>' +
+                '</tr>';
+            $("#form-product-body").append(row);
+        }
+        hideProductPanel();
+    }
+    function openProductPanel() {
+        $("#product-panel").css("display", "block");
+        $(".loading").css("display", "block");
+    }
+    function hideProductPanel() {
+        $("#product-panel").css("display", "none");
+        $(".loading").css("display", "none");
+    }
+    function AddProductAmount() {
+        var form = $("#add-amount-form");
+        $('form#add-amount-form input[type="hidden"]:not([name="productId[]"])').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+        
+        post("AddProductAmount", form.serialize(), function (response) {
+            console.log(response);
+             if(response.status ==1)  window.location.href = 'AddProductAmount.html';
+        });
+    }
+    function deleteProduct(id) {
+        $.each($("#form-product-body tr"), function (i, row) {
+            var td = row.getElementsByTagName("td")[0];
+            if (td) {
+                if (td.getElementsByTagName("input")[0].value == id) {
+                    document.getElementById("form-product-body").deleteRow(i);
+                }
+            }
+        });
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bare - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 70px;
+            /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <div id="nav"></div>
+
+    <div class="container">
+        <h1>แก้ไขวัตถุดิบ</h1>
+        <form id="material-form" class=".col-md-6 .col-md-offset-3" method="post" action="javascript:editMaterial();">
+            <label>รหัสสินค้า: </label><br/>
+            <input type="text" name="materialId" readonly class="form-control" required /><br/>
+            <label>ชื่อวัตถุดิบ: </label><br/>
+            <input type="text" name="materialName" class="form-control" required /><br/>
+            <label>หมวดหมู่: </label><br/>
+            <select id="category-selector" class="form-control" name="materialTypeId" required> </select><br/>
+            <label>จำนวน: </label><br/>
+            <input type="number" name="materialAmount" class="form-control" required /><br/>
+            <input type="submit" class="btn btn-success" value="เพิ่มวัตถุดิบ" />
+            <input type="button" class="btn" value="ยกเลิก" onclick="gotoDashBoard()" />
+        </form>
+    </div>
+
+    <div id="alert-panel" class="alert-panel">
+    </div>
+
+
+
+
+</body>
+<!-- jQuery Version 1.11.1 -->
+<script src="../js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../component/navigation.js"></script>
+<script src="../component/alert.js"></script>
+<script>
+    var id;
+    $(document).ready(function () {
+        loadNav();
+        id = getParameterByName("id");
+        refreshMaterialType();
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin"),
+            "materialId": getParameterByName("id")
+        };
+        post("GetMaterialById", param, function (response) {
+            $.each(response.data, function (i, item) {
+                console.log(item);
+                $("input[name=materialId]").each(function () {
+                    this.value = item.id;
+                });
+                $("input[name=materialName]").each(function () {
+                    this.value = item.name;
+                });
+                $("input[name=materialAmount]").each(function () {
+                    this.value = item.amount;
+                });
+                $("#category-selector option[value=" + item.MaterialTypeId + "]").attr('selected', 'selected');
+                //$("#display-img").attr("src", item.ImageUrl);
+                //$("#input-file").val(item.ImageUrl);
+            });
+        });
+
+    });
+    function gotoDashBoard() {
+        window.location.href = '../material/dashBoard.html';
+    }
+    function refreshMaterialType() {
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin")
+        };
+        post("GetMaterialTypeList", param, function (data) {
+            $("#material-category-body tr").remove();
+            console.log(data);
+            $.each(data.data, function (i, item) {
+                $('select#category-selector').append($('<option>', {
+                    value: item.id,
+                    text: item.name,
+                    name: "materialTypeName"
+                }));
+            });
+        });
+    }
+    function editMaterial() {
+        var form = $('form#material-form');
+        $('form#material-form input[type="hidden"]').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        var Id = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "materialId").val(id);
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+        form.append(Id);
+        post("UpdateMaterial", form.serialize(), function (data) {
+            if (data.status == 0) {
+                dangerAlert(data.errorMessage);
+            }
+            else {
+                successAlert("แก้ไขสินค้าสำเร็จ");
+                window.location.href = 'dashboard.html';
+            }
+        });
+    }
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+</script>
+<script src="../component/alert.js"></script>
+
+</html>

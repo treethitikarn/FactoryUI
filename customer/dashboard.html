@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bare - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 70px;
+            /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <div id="nav"></div>
+    <!-- Page Content -->
+    <div class="container">
+
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <form class="navbar-form navbar-left" id="search-form" method="post" action="javascript:search();">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="customerId" placeholder="รหัสลูกค้า">
+                            <input type="text" class="form-control" name="customerName" placeholder="ชื่อ ">
+                            <select id="region-selector" class="form-control" name="regionId">
+                                    </select>
+                        </div>
+                        <button type="submit" class="btn btn-default">ค้นหา</button>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="AddCustomer.html">เพิ่มลูกค้า</a></li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+        <table class="table">
+            <thead class="">
+                <tr>
+                    <th>รหัสลูกค้า</th>
+                    <th>ชื่อลูกค้า</th>
+                    <th>ภาค</th>
+                    <th>เบอร์โทร</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="customer-body"></tbody>
+        </table>
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery Version 1.11.1 -->
+    <script src="../js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../js/bootstrap.min.js"></script>
+    <div class="alert-panel" id="alert-panel">
+    </div>
+    <div class="loading" style="display:none"> </div>
+</body>
+
+<script src="../js/api.js"></script>
+<script src="../component/alert.js"></script>\
+<script src="../component/navigation.js"></script>
+<script>
+    var region;
+    $(document).ready(function () {
+        loadNav();
+        refreshCustomer();
+
+        // refreshProductType();
+    });
+
+    function deleteCustomer(id) {
+        var result = confirm("ต้องการลบข้อมูล");
+        if (result) {
+            var param = {
+                "token": localStorage.getItem("token"),
+                "userId": localStorage.getItem("userId"),
+                "isAdmin": localStorage.getItem("isAdmin"),
+                "customerId": id
+            };
+            post("DeleteCustomer", param, function (data) {
+                console.log("data: " + data);
+                if (data.status == 0) {
+                    dangerAlert(data.errorMessage);
+                }
+                else {
+                    successAlert("ลบลูกค้า");
+                    refreshCustomer();
+                }
+            });
+            return false;
+        }
+    }
+    function refreshCustomer() {
+        $("#customer-body tr").remove();
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin")
+        };
+        post("GetRegionList", param, function (data1) {
+            region = data1.data;
+            $('select#region-selector').append($('<option>', {
+                value: "",
+                text: "ทุกภาค",
+                name: "regionId"
+            }));
+            $.each(data1.data, function (i, item) {
+                $('select#region-selector').append($('<option>', {
+                    value: item.id,
+                    text: item.name,
+                    name: "regionId"
+                }));
+            });
+            post("GetCustomerList", param, function (data) {
+                $.each(data.data, function (i, item) {
+                    var type;
+                    $.each(region, function (j, element) {
+                        if (element.id === item.RegionId) {
+                            console.log(element);
+                            type = element.name;
+                        }
+                    });
+                    console.log(item);
+                    var iconText = localStorage.getItem("isAdmin") ? '<a class="glyphicon glyphicon-pencil" rhef="" onclick="editCustomer(' + item.id + ')"></a><a class="glyphicon glyphicon-trash" rhef="" onclick="deleteCustomer(' + item.id + ')"></a>' : '';
+                    var row = '<tr>' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.Phone + '</td>' +
+                        '<td>' + iconText + '</td>' +
+                        '</tr>';
+                    $("#customer-body").append(row);
+                });
+            });
+        });
+    }
+    function editCustomer(id) {
+        window.location.href = "EditCustomer.html?id=" + id;
+    }
+    function search() {
+        var form = $('form#search-form');
+        $('form#search-form input[type="hidden"]').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+        post("SearchCustomer", form.serialize(), function (data) {
+            if (data.status == 0) {
+                dangerAlert(data.errorMessage);
+            }
+            else {
+                $("#customer-body tr").remove();
+                $.each(data.data, function (i, item) {
+                    var type;
+                    $.each(region, function (j, element) {
+                        if (element.id === item.regionId) {
+                            console.log(element);
+                            type = element.name;
+                        }
+                    });
+                    var iconText = localStorage.getItem("isAdmin") ? '<a class="glyphicon glyphicon-pencil" rhef="" onclick="editCustomer(' + item.id + ')"></a><a class="glyphicon glyphicon-trash" rhef="" onclick="deleteCustomer(' + item.id + ')"></a>' : '';
+                    var row = '<tr>' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.Name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.phone + '</td>' +
+                        '<td>' + iconText + '</td>' +
+                        '</tr>';
+                    $("#customer-body").append(row);
+                });
+            }
+        });
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bare - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 70px;
+            /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <div id="nav"></div>
+    <div class="container">
+        <form id="add-amount-form" class=".col-md-6 .col-md-offset-3" method="post" action="javascript:AddMaterialAmount();">
+            <table class="table">
+                <thead class="">
+                    <tr>
+                        <th>รหัส</th>
+                        <th>ชื่อวัตถุดิบ</th>
+                        <th>คลัง</th>
+                        <th>รับเข้า</th>
+                        <th>จ่ายออก</th>
+                        <th>คงเหลือ</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="form-material-body"></tbody>
+            </table>
+            <input type="submit" class="btn btn-success" value="ตกลง" />
+            <input type="button" class="btn" value="ยกเลิก" onclick="gotoBalanceDashBoard()" />
+        </form>
+    </div>
+
+
+    <div id="alert-panel" class="alert-panel">
+    </div>
+    <div class="loading" style="display:none"> </div>
+
+
+</body>
+<!-- jQuery Version 1.11.1 -->
+<script src="../js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../component/navigation.js"></script>
+<script src="../component/alert.js"></script>
+<script>
+    var materialType;
+    $(document).ready(function () {
+        loadNav();
+        refreshMaterial();
+
+        // refreshMaterialType();
+    });
+    function refreshMaterial() {
+        $("#material-body tr").remove();
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin")
+        };
+        post("GetMaterialTypeList", param, function (data1) {
+            materialType = data1.data;
+            $('select#category-selector').append($('<option>', {
+                value: "",
+                text: "ทุกหมวดหมู่",
+                name: "materialTypeName"
+            }));
+            $("#material-category-body tr").remove();
+            $.each(data1.data, function (i, item) {
+                $('select#category-selector').append($('<option>', {
+                    value: item.id,
+                    text: item.name,
+                    name: "materialTypeName"
+                }));
+            });
+        });
+        post("GetMaterialList", param, function (data) {
+            $.each(data.data, function (i, item) {
+                var row = '<tr>' +
+                    '<td><input type="hidden" value="' + item.id + '" name="materialId[]"/><input type="text" class="form-control" readonly value="' + item.id + '" name="materialId[]"/></td>' +
+                    '<td><input type="text" class="form-control" readonly value="' + item.name + '" /></td>' +
+                    '<td><input type="number" class="form-control" id="amount_' + item.id + '" readonly value="' + item.amount + '" /></td>' +
+                    '<td><input type="number" class="form-control" value="0" min="0" onchange="sumBalance(' + item.id + ')" id="acquire_' + item.id + '" name="acquire[]"/></td>' +
+                    '<td><input type="number" class="form-control" value="0" min="0" onchange="sumBalance(' + item.id + ')" id="use_' + item.id + '" name="use[]"/></td>' +
+                    '<td><input type="number" class="form-control" id="balance_' + item.id + '" readonly /></td>' +
+                    '</tr>';
+                $("#form-material-body").append(row);
+            });
+        });
+    }
+    function AddMaterialAmount() {
+        var form = $("#add-amount-form");
+        $('form#add-amount-form input[type="hidden"]:not([name="materialId[]"])').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+
+        post("AddNewMaterialTransaction", form.serialize(), function (response) {
+            console.log(response);
+            if (response.status == 1) window.location.href = 'dashboard.html';
+        });
+    }
+    function sumBalance(i) {
+        var amount = parseInt($("#amount_" + i).val());
+        var acquire = parseInt($("#acquire_" + i).val());
+        var use = parseInt($("#use_" + i).val());
+        var left = amount + acquire - use;
+        if (left >= 0) {
+            $("#balance_" + i).val(left);
+        }
+        else{
+            $("#acquire_" + i).val(0);
+            $("#use_" + i).val(0);
+            alert("ค่าคงเหลือห้ามน้อยกว่า 0");
+        }
+    }
+    function gotoBalanceDashBoard() {
+        window.location = "../material/BalanceDashBoard.html";
+    }
+
+</script>
+
+</html>

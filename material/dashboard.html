@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bare - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 70px;
+            /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <div id="nav"></div>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <form class="navbar-form navbar-left" id="search-form" method="post" action="javascript:search();">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="materialId" placeholder="รหัสวัตถุดิบ">
+                            <input type="text" class="form-control" name="materialName" placeholder="ชื่อ ">
+                            <select id="materialType-selector" class="form-control" name="materialTypeId">
+                                    </select>
+                        </div>
+                        <button type="submit" class="btn btn-default">ค้นหา</button>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="AddMaterial.html">เพิ่มวัตถุดิบ</a></li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+        <table class="table">
+            <thead class="">
+                <tr>
+                    <th>รหัสวัตถุดิบ</th>
+                    <th>ชื่อวัตถุดิบ</th>
+                    <th>หมวดหมู่</th>
+                    <th>จำนวน</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="material-body"></tbody>
+        </table>
+    </div>
+    <!-- /.container -->
+
+    <div class="alert-panel" id="alert-panel">
+    </div>
+    <div class="loading" style="display:none"> </div>
+</body>
+
+<!-- jQuery Version 1.11.1 -->
+<script src="../js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../js/bootstrap.min.js"></script>
+<script src="../component/navigation.js"></script>
+<script src="../component/alert.js"></script>
+<script>
+    var materialType;
+    $(document).ready(function () {
+        loadNav();
+        refreshMaterial();
+
+        // refreshProductType();
+    });
+
+    function deleteMaterial(id) {
+        var result = confirm("ต้องการลบข้อมูล");
+        if (result) {
+            var param = {
+                "token": localStorage.getItem("token"),
+                "userId": localStorage.getItem("userId"),
+                "isAdmin": localStorage.getItem("isAdmin"),
+                "materialId": id
+            };
+            post("DeleteMaterial", param, function (data) {
+                console.log("data: " + data);
+                if (data.status == 0) {
+                    dangerAlert(data.errorMessage);
+                }
+                else {
+                    successAlert("ลบลูกค้า");
+                    refreshMaterial();
+                }
+            });
+            return false;
+        }
+    }
+    function refreshMaterial() {
+        $("#material-body tr").remove();
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin")
+        };
+        post("GetmaterialTypeList", param, function (data1) {
+            materialType = data1.data;
+            $('select#materialType-selector').append($('<option>', {
+                value: "",
+                text: "ทุกชนิด",
+                name: "materialTypeId"
+            }));
+            $.each(data1.data, function (i, item) {
+                $('select#materialType-selector').append($('<option>', {
+                    value: item.id,
+                    text: item.name,
+                    name: "materialTypeId"
+                }));
+            });
+            post("GetMaterialList", param, function (response) {
+                console.log(response);
+                $.each(response.data, function (i, item) {
+                    var type;
+                    $.each(materialType, function (j, element) {
+                        if (element.id === item.materialtypeid) {
+                            console.log(element);
+                            type = element.name;
+                        }
+                    });
+                    console.log(item);
+                    var iconText = localStorage.getItem("isAdmin") ? '<a class="glyphicon glyphicon-pencil" rhef="" onclick="editMaterial(' + item.id + ')"></a><a class="glyphicon glyphicon-trash" rhef="" onclick="deleteMaterial(' + item.id + ')"></a>' : '';
+                    var row = '<tr>' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.amount + '</td>' +
+                        '<td>' + iconText + '</td>' +
+                        '</tr>';
+                    $("#material-body").append(row);
+                });
+            });
+        });
+    }
+    function editMaterial(id) {
+        window.location.href = "EditMaterial.html?id=" + id;
+    }
+    function search() {
+        var form = $('form#search-form');
+        $('form#search-form input[type="hidden"]').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+        post("SearchMaterial", form.serialize(), function (response) {
+            if (response.status == 0) {
+                dangerAlert(response.errorMessage);
+            }
+            else {
+                $("#material-body tr").remove();
+                $.each(response.data, function (i, item) {
+                    var type;
+                    $.each(materialType, function (j, element) {
+                        if (element.id === item.materialtypeid) {
+                            console.log(element);
+                            type = element.name;
+                        }
+                    });
+                    console.log(item);
+                    var iconText = localStorage.getItem("isAdmin") ? '<a class="glyphicon glyphicon-pencil" rhef="" onclick="editMaterial(' + item.id + ')"></a><a class="glyphicon glyphicon-trash" rhef="" onclick="deleteMaterial(' + item.id + ')"></a>' : '';
+                    var row = '<tr>' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.amount + '</td>' +
+                        '<td>' + iconText + '</td>' +
+                        '</tr>';
+                    $("#material-body").append(row);
+                });
+            }
+        });
+    }
+
+</script>
+<script src="../js/api.js"></script>
+<script src="../component/alert.js"></script>
+
+</html>

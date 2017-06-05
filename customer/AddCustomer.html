@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bare - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 70px;
+            /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <div id="nav"></div>
+    <div class="container">
+        <h1>เพิ่มลูกค้า</h1>
+        <form id="customer-form" class=".col-md-6 .col-md-offset-3" method="post" action="javascript:addCustomer();">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <label>ชื่อ: </label><br/>
+                    <input type="text" name="customerName" class="form-control" required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>ที่อยู่: </label><br/>
+                    <input type="text" name="address" class="form-control" required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>ตำบล: </label><br/>
+                    <input type="text" name="subdistrict" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                    <label>อำเภอ: </label><br/>
+                    <input type="text" name="district" class="form-control" required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>จังหวัด: </label><br/>
+                    <input type="text" class="form-control" name="province" required />
+                </div>
+                <div class="col-md-6">
+                    <label>รหัสไปรษณีย์: </label><br/>
+                    <input type="text" class="form-control" name="postcode" required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>ภาค: </label><br/>
+                    <select id="region-selector" class="form-control" name="regionId" required> </select>
+                </div>
+                <div class="col-md-6">
+                    <label>เบอร์โทรศัพท์: </label><br/>
+                    <input type="text" class="form-control" name="phone" required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>ขนส่ง: </label><br/>
+                    <input type="text" class="form-control" name="transporter" required /><br/>
+                </div>
+                <div class="col-md-6">
+                    <label>เบอร์โทรศัพท์ขนส่ง: </label><br/>
+                    <input type="text" class="form-control" name="transporterPhone" required /><br/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" class="btn btn-success" value="เพิ่มลูกค้า" />
+                    <input type="button" class="btn" style="margin-left: 5px;" value="ยกเลิก" onclick="gotoDashBoard()" />
+                </div>
+            </div>
+        </form>
+    </div>
+
+    </div>
+    </form>
+
+    </div>
+    <div id="alert-panel" class="alert-panel">
+    </div>
+</body>
+<!-- jQuery Version 1.11.1 -->
+<script src="../js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../component/navigation.js"></script>
+<script src="../component/alert.js"></script>
+<script>
+    $(document).ready(function () {
+        loadNav();
+        refresRegion();
+    }); refresRegion
+    function gotoDashBoard() {
+        window.location.href = 'dashboard.html';
+    }
+    function refresRegion() {
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin")
+        };
+        post("GetRegionList", param, function (data) {
+            $.each(data.data, function (i, item) {
+                $('select#region-selector').append($('<option>', {
+                    value: item.id,
+                    text: item.name,
+                    name: "regionId"
+                }));
+            });
+        });
+    }
+    function addCustomer() {
+        var form = $('form#customer-form');
+        $('form#form#customer-form input[type="hidden"]').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+        post("AddNewCustomer", form.serialize(), function (data) {
+            window.location.href = 'dashboard.html';
+        });
+    }
+
+</script>
+
+</html>

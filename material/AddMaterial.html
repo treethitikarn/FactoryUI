@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bare - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 70px;
+            /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <div id="nav"></div>
+
+    <div class="container">
+        <h1>เพิ่มวัตถุดิบ</h1>
+        <form id="material-form" class=".col-md-6 .col-md-offset-3" method="post" action="javascript:addMaterial();">
+            <label>ชื่อวัตถุดิบ: </label><br/>
+            <input type="text" name="materialName" class="form-control" required /><br/>
+            <label>หมวดหมู่: </label><br/>
+            <select id="category-selector" class="form-control" name="materialTypeId" required> </select><br/>
+            <label>จำนวน: </label><br/>
+            <input type="number" min="0" name="materialAmount" class="form-control" required /><br/>
+            <input type="submit" class="btn btn-success" value="เพิ่มวัตถุดิบ" />
+            <input type="button" class="btn" value="ยกเลิก" onclick="gotoDashBoard()" />
+        </form>
+    </div>
+
+    <div id="alert-panel" class="alert-panel">
+    </div>
+
+
+
+
+</body>
+<!-- jQuery Version 1.11.1 -->
+<script src="../js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../component/navigation.js"></script>
+<script src="../component/alert.js"></script>
+<script>
+    $(document).ready(function () {
+        loadNav();
+        refreshMaterialType();
+    });
+    function gotoDashBoard() {
+        window.location.href = '../material/dashboard.html';
+    }
+    function refreshMaterialType() {
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin")
+        };
+        post("GetMaterialTypeList", param, function (data) {
+            $("#material-category-body tr").remove();
+            console.log(data);
+            $.each(data.data, function (i, item) {
+                $('select#category-selector').append($('<option>', {
+                    value: item.id,
+                    text: item.name,
+                    name: "materialTypeName"
+                }));
+                var iconText = localStorage.getItem("isAdmin") ? '<a class="glyphicon glyphicon-pencil" rhef="" onclick="editMaterialType(' + item.id + ')"></a><a class="glyphicon glyphicon-trash" rhef="" onclick="deleteMaterialType(' + item.id + ')"></a>' : '';
+                var row = '<tr>' +
+                    '<td>' + item.name + '</td>' +
+                    '<td>' + iconText + '</td>' +
+                    '</tr>';
+                $("#material-category-body").append(row);
+            });
+        });
+    }
+    function selectImg() {
+        $("#input-file").click();
+    }
+    $('#input-file').change(function () {
+        var path = URL.createObjectURL(event.target.files[0]);
+        $("#display-img").attr("src", path);
+    });
+    function addMaterial() {
+        var form = $('form#material-form');
+        $('form#form#material-form input[type="hidden"]').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+        postImage("AddNewMaterial", new FormData(form[0]), function (data) {
+            window.location.href = 'dashboard.html';
+        });
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bare - Start Bootstrap Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding-top: 70px;
+            /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+    <div id="nav"></div>
+    <div class="container">
+        <h1>เพิ่มคำสั่งซื้อ</h1>
+        <div class="row">
+            <div class="col-md-12">
+                <input type="button" class="btn btn-success" style="float:right;" value="เลือกลูกค้า" onclick="openCustomerPanel()" />
+            </div>
+        </div>
+        <form id="add-amount-form" class=".col-md-6 .col-md-offset-3" method="post" action="javascript:AddNewOrder();">
+            <div class="row">
+                <div class="col-md-12">
+                    <label>รหัส: </label>
+                    <input type="text" name="customerId" class="form-control" readonly required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>ชื่อ: </label><br/>
+                    <input type="text" name="customerName" class="form-control" readonly required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>ที่อยู่: </label><br/>
+                    <input type="text" name="address" class="form-control" readonly required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>ตำบล: </label><br/>
+                    <input type="text" name="subdistrict" class="form-control" readonly required />
+                </div>
+                <div class="col-md-6">
+                    <label>อำเภอ: </label><br/>
+                    <input type="text" name="district" class="form-control" readonly required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>จังหวัด: </label><br/>
+                    <input type="text" class="form-control" name="province" readonly required />
+                </div>
+                <div class="col-md-6">
+                    <label>รหัสไปรษณีย์: </label><br/>
+                    <input type="text" class="form-control" name="postcode" readonly required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>ภาค: </label><br/>
+                    <select id="region-selector" class="form-control" name="regionId" disabled required> </select>
+                </div>
+                <div class="col-md-6">
+                    <label>เบอร์โทรศัพท์: </label><br/>
+                    <input type="text" class="form-control" name="phone" readonly required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <br>
+                    <input type="button" class="btn btn-success" style="float:right;" value="เลือกสินค้า" onclick="openProductPanel()" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead class="">
+                            <tr>
+                                <th>รหัส</th>
+                                <th>ชื่อสินค้า</th>
+                                <th>ราคาต่อหน่วย</th>
+                                <th>จำนวนสินค้า</th>
+                                <th>รวม</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="form-product-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label>รวม: </label><br/>
+                    <input type="text" class="form-control" id="total" disabled />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" class="btn btn-success" value="ตกลง" />
+                    <input type="button" style="margin-left: 5px;" class="btn" value="ยกเลิก" onclick="gotoDashBoard()" />
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+        </form>
+    </div>
+
+
+    <div id="alert-panel" class="alert-panel">
+    </div>
+    <div class="panel panel-default pop-up" id="product-panel" style="display:none;">
+        <div class="panel-heading">
+            <h3 class="panel-title">สินค้า<a style="float: right;" href="javascript:hideProductPanel()">X</a></h3>
+        </div>
+        <div class="panel-body">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <form class="navbar-form navbar-left" id="search-form" method="post" action="javascript:search();">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="productId" placeholder="รหัสสินค้า">
+                                <input type="text" class="form-control" name="productName" placeholder="ชื่อสินค้า">
+                                <select id="category-selector" class="form-control" name="productTypeId">
+                                    </select>
+                            </div>
+                            <button type="submit" class="btn btn-default">ค้นหา</button>
+                        </form>
+
+                    </div>
+                    <!-- /.navbar-collapse -->
+                </div>
+                <!-- /.container-fluid -->
+            </nav>
+            <table class="table">
+                <thead class="">
+                    <tr>
+                        <th>รหัสสินค้า</th>
+                        <th>ชื่อสินค้า</th>
+                        <th>หมวดหมู่สินค้า</th>
+                        <th>จำนวนสินค้า</th>
+                    </tr>
+                </thead>
+                <tbody id="product-body"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="panel panel-default pop-up" id="customer-panel" style="display:none;">
+        <div class="panel-heading">
+            <h3 class="panel-title">ลูกค้า <a style="float: right;" href="javascript:hideCustomerPanel()">X</a></h3>
+
+        </div>
+        <div class="panel-body">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <form class="navbar-form navbar-left" id="search-customer-form" method="post" action="javascript:searchCustomer();">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="customerId" placeholder="รหัสลูกค้า">
+                                <input type="text" class="form-control" name="customerName" placeholder="ชื่อ ">
+                                <select id="region-selector" class="form-control" name="regionId"></select>
+                            </div>
+                            <button type="submit" class="btn btn-default">ค้นหา</button>
+                        </form>
+
+                    </div>
+                    <!-- /.navbar-collapse -->
+
+                </div>
+                <!-- /.container-fluid -->
+            </nav>
+            <table class="table">
+                <thead class="">
+                    <tr>
+                        <th>รหัสลูกค้า</th>
+                        <th>ชื่อลูกค้า</th>
+                        <th>ภาค</th>
+                        <th>เบอร์โทร</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="customer-body"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="loading" style="display:none"> </div>
+
+
+</body>
+<!-- jQuery Version 1.11.1 -->
+<script src="../js/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../component/navigation.js"></script>
+<script src="../component/alert.js"></script>
+<script>
+    var productType;
+    $(document).ready(function () {
+        loadNav();
+        refreshProduct();
+        refreshCustomer();
+    });
+    function gotoDashBoard() {
+        window.location.href = 'dashboard.html';
+    }
+    function refreshCustomer() {
+        $("#customer-body tr").remove();
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin")
+        };
+        post("GetRegionList", param, function (data1) {
+            region = data1.data;
+            $('select#region-selector').append($('<option>', {
+                value: "",
+                text: "ทุกภาค",
+                name: "regionId"
+            }));
+            $.each(data1.data, function (i, item) {
+                $('select#region-selector').append($('<option>', {
+                    value: item.id,
+                    text: item.name,
+                    name: "regionId"
+                }));
+            });
+            post("GetCustomerList", param, function (data) {
+                console.log("data: " + data);
+                $.each(data.data, function (i, item) {
+                    var type;
+                    $.each(region, function (j, element) {
+                        if (element.id === item.RegionId) {
+                            console.log(element);
+                            type = element.name;
+                        }
+                    });
+                    var row = '<tr onclick="bindingCustomer(' + item.id + ')">' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.Phone + '</td>'
+                    '</tr>';
+                    $("#customer-body").append(row);
+                });
+            });
+        });
+    }
+    function searchCustomer() {
+        var form = $('form#search-customer-form');
+        $('form#search-customer-form input[type="hidden"]').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+        post("SearchCustomer", form.serialize(), function (data) {
+            if (data.status == 0) {
+                dangerAlert(data.errorMessage);
+            }
+            else {
+                $("#customer-body tr").remove();
+                $.each(data.data, function (i, item) {
+                    var type;
+                    $.each(region, function (j, element) {
+                        if (element.id === item.regionId) {
+                            console.log(element);
+                            type = element.name;
+                        }
+                    });
+                    var row = '<tr onclick="bindingCustomer(' + item.id + ')">' +
+                        '<td>' + item.id + ' </td>' +
+                        '<td>' + item.Name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.phone + '</td>' +
+                    '</tr>';
+                    $("#customer-body").append(row);
+                });
+            }
+        });
+    }
+    function refreshProduct() {
+        $("#product-body tr").remove();
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin")
+        };
+        post("GetProductTypeList", param, function (data1) {
+            productType = data1.data;
+            $('select#category-selector').append($('<option>', {
+                value: "",
+                text: "ทุกหมวดหมู่",
+                name: "productTypeName"
+            }));
+            $("#product-category-body tr").remove();
+            $.each(data1.data, function (i, item) {
+                $('select#category-selector').append($('<option>', {
+                    value: item.id,
+                    text: item.name,
+                    name: "productTypeName"
+                }));
+            });
+            post("GetProductList", param, function (data) {
+                $.each(data.data, function (i, item) {
+                    var type;
+                    $.each(productType, function (j, element) {
+                        if (element.id === item.ProductTypeId) {
+                            console.log(element);
+                            type = element.name;
+                        }
+                    });
+                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;)">' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.Name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.Amount + '</td>' +
+                        '</tr>';
+                    $("#product-body").append(row);
+                });
+            });
+        });
+    }
+    function search() {
+        var form = $('form#search-form');
+        $('form#search-form input[type="hidden"]').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+        post("SearchProduct", form.serialize(), function (data) {
+            if (data.status == 0) {
+                dangerAlert(data.errorMessage);
+            }
+            else {
+                $("#product-body tr").remove();
+                console.log(data.data);
+                $.each(data.data, function (i, item) {
+                    var type;
+                    $.each(productType, function (j, element) {
+                        if (element.id === item.ProductTypeId) {
+                            console.log(element);
+                            type = element.name;
+                        }
+                    });
+
+                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.name + '&#39;)">' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.amount + '</td>' +
+                        '</tr>';
+                    $("#product-body").append(row);
+                });
+            }
+        });
+    }
+    function addProductToForm(id, name) {
+        var IsExist = false;
+        $.each($("#form-product-body tr"), function (i, row) {
+            var td = row.getElementsByTagName("td")[0];
+            if (td) {
+                if (td.getElementsByTagName("input")[0].value == id) {
+                    IsExist = true;
+                }
+            }
+        });
+        if (!IsExist) {
+            var iconText = localStorage.getItem("isAdmin") ? '<a class="glyphicon glyphicon-trash" rhef="" onclick="deleteProduct(' + id + ')"></a>' : '';
+            var row = '<tr >' +
+                '<td><input type="hidden" name="productId[]"  value="' + id + '"/>' + id + '</td>' +
+                '<td>' + name + '</td>' +
+                '<td><input type="number" min="0" class="form-control" value="0" onchange="sumSubTotal(' + id + ')" id="priceperpiece_' + id + '" name="priceperpiece[]"/></td>' +
+                '<td><input type="number" min="0" class="form-control" value="0" onchange="sumSubTotal(' + id + ')" id="amount_' + id + '" name="amount[]"/></td>' +
+                '<td><input type="number" class="form-control" value="0" name="subtotal" disabled id="subtotal_' + id + '"/></td>' +
+                '<td>' + iconText + '</td>' +
+                '</tr>';
+            $("#form-product-body").append(row);
+        }
+        hideProductPanel();
+    }
+    function openProductPanel() {
+        $("#product-panel").css("display", "block");
+        $(".loading").css("display", "block");
+    }
+    function hideProductPanel() {
+        $("#product-panel").css("display", "none");
+        $(".loading").css("display", "none");
+    }
+    function openCustomerPanel() {
+        $("#customer-panel").css("display", "block");
+        $(".loading").css("display", "block");
+    }
+    function hideCustomerPanel() {
+        $("#customer-panel").css("display", "none");
+        $(".loading").css("display", "none");
+    }
+    function AddNewOrder() {
+        $('form#add-amount-form input[type="hidden"]:not([name="productId[]"]):not([name="customerId"])').remove();
+        var form = $("#add-amount-form");
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+
+        post("AddNewOrder", form.serialize(), function (response) {
+            console.log(response);
+            if (response.status == 1) window.location.href = 'dashboard.html';
+        });
+    }
+    function deleteProduct(id) {
+        $.each($("#form-product-body tr"), function (i, row) {
+            var td = row.getElementsByTagName("td")[0];
+            if (td) {
+                if (td.getElementsByTagName("input")[0].value == id) {
+                    document.getElementById("form-product-body").deleteRow(i);
+                }
+            }
+        });
+    }
+    function bindingCustomer(id) {
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin"),
+            "customerId": id
+        };
+        post("GetCustomerById", param, function (response) {
+            $.each(response.data, function (i, item) {
+                console.log(item);
+                $("input[name=customerId]").each(function () {
+                    this.value = item.id;
+                });
+                $("input[name=customerName]").each(function () {
+                    this.value = item.name;
+                });
+                $("input[name=address]").each(function () {
+                    this.value = item.Address;
+                });
+                $("input[name=subdistrict]").each(function () {
+                    this.value = item.SubDistrict;
+                });
+                $("input[name=district]").each(function () {
+                    this.value = item.district;
+                });
+                $("input[name=province]").each(function () {
+                    this.value = item.Province;
+                });
+                $("input[name=postcode]").each(function () {
+                    this.value = item.PostCode;
+                });
+                $("input[name=phone]").each(function () {
+                    this.value = item.Phone;
+                });
+                $("input[name=transporter]").each(function () {
+                    this.value = item.Transporter;
+                });
+                $("input[name=transporterPhone]").each(function () {
+                    this.value = item.TransporterPhone;
+                });
+                $("#region-selector option[value=" + item.RegionId + "]").attr('selected', 'selected');
+                //$("#display-img").attr("src", item.ImageUrl);
+                //$("#input-file").val(item.ImageUrl);
+            });
+        });
+        hideCustomerPanel();
+    }
+    function sumSubTotal(id) {
+        var amount = parseInt($("#amount_" + id).val());
+        var priceperpiece = parseInt($("#priceperpiece_" + id).val());
+        $("#subtotal_" + id).attr("value", amount * priceperpiece);
+        refreashTotal();
+    }
+    function refreashTotal() {
+        var sum = 0;
+        $("input[name=subtotal]").each(function () {
+            sum += parseInt(this.value);
+        });
+        $("#total").attr("value", sum);
+    }
+
+</script>
+
+</html>

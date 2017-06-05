@@ -1,0 +1,61 @@
+.hideMe {
+    margin: 20px;
+    -webkit-animation: seconds 1.0s forwards;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-delay: 3s;
+    animation: seconds 1.0s forwards;
+    animation-iteration-count: 1;
+    animation-delay: 3s;
+    position: relative;
+}
+@-webkit-keyframes seconds {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    left: -9999px; 
+  }
+}
+@keyframes seconds {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    left: -9999px; 
+  }
+}
+.alert-panel{
+    width: 30%;
+    position: absolute;
+    top: 0;
+    right:0;
+    z-index: 999;
+    
+}
+.pop-up{
+    width: 50%;
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    z-index: 999;
+    max-height: 50%;
+    overflow: auto;
+}
+.loading{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: gray;
+  opacity: 0.5;
+  z-index: 998;
+}
+.glyphicon{
+  margin-right: 5px;
+}
+.row{
+  margin: 5px;
+}
