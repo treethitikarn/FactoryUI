@@ -127,6 +127,11 @@
                 $("input[name=productAmount]").each(function () {
                     this.value = item.Amount;
                 });
+				$("#display-img").attr("src", item.ImageUrl);
+                
+                $("input[name=uploadfile]").each(function () {
+                    this.src = item.ImageUrl;
+                });
                 $("#category-selector option[value=" + item.ProductTypeId + "]").attr('selected', 'selected');
                 //$("#display-img").attr("src", item.ImageUrl);
                 //$("#input-file").val(item.ImageUrl);
@@ -167,6 +172,7 @@
     $('#input-file').change(function () {
         var path = URL.createObjectURL(event.target.files[0]);
         $("#display-img").attr("src", path);
+		 $('#input-file').attr("src", path);
     });
     function editProduct() {
         var form = $('form#product-form');

@@ -133,6 +133,7 @@
     $('#input-file').change(function () {
         var path = URL.createObjectURL(event.target.files[0]);
         $("#display-img").attr("src", path);
+		$('#input-file').attr("src", path);
     });
     function addProduct() {
         var form = $('form#product-form');
