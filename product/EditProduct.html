@@ -39,7 +39,7 @@
         <div class="media">
             <div class="media-left">
                 <a href="#">
-                    <img class="media-object" src="../img/default_img.png" style="max-width: 500px;" onclick="selectImg()" id="display-img" alt="เพิ่มรูป">
+                    <img class="media-object"  style="max-width: 500px;" onclick="selectImg()" id="display-img" alt="เพิ่มรูป">
                 </a>
             </div>
             <div class="media-body">
@@ -76,7 +76,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <input type="file" name="uploadfile" style="opacity: 0" accept=".jpg,.png,.gif" id="input-file" required />
+                            <input type="file" name="uploadfile" style="opacity: 0" accept=".jpg,.png,.gif" id="input-file" />
                             <input type="submit" class="btn btn-success" value="แก้ไขสินค้า" />
                             <input type="button" style="margin-left: 5px;" class="btn" value="ยกเลิก" onclick="gotoDashBoard()" />
                         </div>
@@ -127,14 +127,9 @@
                 $("input[name=productAmount]").each(function () {
                     this.value = item.Amount;
                 });
-				$("#display-img").attr("src", item.ImageUrl);
-                
-                $("input[name=uploadfile]").each(function () {
-                    this.src = item.ImageUrl;
-                });
                 $("#category-selector option[value=" + item.ProductTypeId + "]").attr('selected', 'selected');
-                //$("#display-img").attr("src", item.ImageUrl);
-                //$("#input-file").val(item.ImageUrl);
+                $("#display-img").attr("src", item.imageurl);
+                $("#input-file").val(item.imageurl);
             });
         });
 
@@ -172,7 +167,7 @@
     $('#input-file').change(function () {
         var path = URL.createObjectURL(event.target.files[0]);
         $("#display-img").attr("src", path);
-		 $('#input-file').attr("src", path);
+        $('#input-file').attr("src", path);
     });
     function editProduct() {
         var form = $('form#product-form');
