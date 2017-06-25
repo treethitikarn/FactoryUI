@@ -31,7 +31,6 @@
         function login() {
             var loginForm = $('form#login-form'); 
             post("login", loginForm.serialize(), function (data) {
-                console.log("data: " + data);
                 if (data.status == 0) {
                     dangerAlert(data.errorMessage);
                 }

@@ -111,7 +111,6 @@
         };
         post("GetProductTypeList", param, function (data) {
             $("#product-category-body tr").remove();
-            console.log(data);
             $.each(data.data, function (i, item) {
                 $('select#category-selector').append($('<option>', {
                     value: item.id,
