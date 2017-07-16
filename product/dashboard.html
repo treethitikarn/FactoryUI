@@ -309,7 +309,9 @@
                     '<td>' + item.name + '</td>' +
                     '<td>' + iconText + '</td>' +
                     '</tr>';
-                $("#product-category-body").append(row);
+                if (item.id !== 1) {
+                    $("#product-category-body").append(row);
+                }
             });
         });
     }
@@ -339,7 +341,9 @@
                     '<td>' + item.name + '</td>' +
                     '<td>' + iconText + '</td>' +
                     '</tr>';
-                $("#product-category-body").append(row);
+                if (item.id !== 1) {
+                    $("#product-category-body").append(row);
+                }
             });
             post("GetProductList", param, function (data) {
                 $.each(data.data, function (i, item) {
