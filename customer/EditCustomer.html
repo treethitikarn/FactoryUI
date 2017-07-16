@@ -135,7 +135,6 @@
         };
         post("GetCustomerById", param, function (response) {
             $.each(response.data, function (i, item) {
-                console.log(item);
                 $("input[name=customerId]").each(function () {
                     this.value = item.id;
                 });

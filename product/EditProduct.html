@@ -65,7 +65,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label>จำนวน: </label><br/>
-                            <input type="number" min="0" class="form-control" name="productAmount" required />
+                            <input type="number" min="0" class="form-control" name="productAmount" readonly />
                         </div>
                     </div>
                     <div class="row">
@@ -114,7 +114,6 @@
         };
         post("GetProductById", param, function (response) {
             $.each(response.data, function (i, item) {
-                console.log(item);
                 $("input[name=productId]").each(function () {
                     this.value = item.id;
                 });
@@ -129,7 +128,9 @@
                 });
                 $("#category-selector option[value=" + item.ProductTypeId + "]").attr('selected', 'selected');
                 $("#display-img").attr("src", item.imageurl);
-                $("#input-file").val(item.imageurl);
+                if(item.imageurl == null) $("#display-img").attr("src", "../img/default_img.png");
+                else $("#display-img").attr("src", item.imageurl);
+                $("#input-file").attr("src", item.imageurl);
             });
         });
 
@@ -145,7 +146,6 @@
         };
         post("GetProductTypeList", param, function (data) {
             $("#product-category-body tr").remove();
-            console.log(data);
             $.each(data.data, function (i, item) {
                 $('select#category-selector').append($('<option>', {
                     value: item.id,

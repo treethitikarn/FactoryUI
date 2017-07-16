@@ -466,7 +466,6 @@
             var td = row.getElementsByTagName("td")[0];
             if (td) {
                 if (td.getElementsByTagName("input")[0].value == id) {
-                    console.log("deleteeeeeeeeeeeeeeeeee");
                     document.getElementById("form-product-body").deleteRow(i);
                 }
             }
@@ -512,8 +511,6 @@
                     this.value = item.TransporterPhone;
                 });
                 $("#region-selector option[value=" + item.RegionId + "]").attr('selected', 'selected');
-                //$("#display-img").attr("src", item.ImageUrl);
-                //$("#input-file").val(item.ImageUrl);
             });
         });
         hideCustomerPanel();
@@ -529,6 +526,7 @@
         $("input[name=subtotal]").each(function () {
             sum += parseInt(this.value);
         });
+        
         $("#total").attr("value", sum);
     }
     function bindingOrder(id) {
@@ -559,10 +557,11 @@
             '<td>' + name + '</td>' +
             '<td><input type="number" min="0" value=' + priceperpiece + ' class="form-control" value="0" onchange="sumSubTotal(' + productId + ')" id="priceperpiece_' + productId + '" name="priceperpiece[]"/></td>' +
             '<td><input type="number" min="0" value=' + amount + '  class="form-control" value="0" onchange="sumSubTotal(' + productId + ')" id="amount_' + productId + '" name="amount[]"/></td>' +
-            '<td><input type="number" value=' + amount * priceperpiece + ' class="form-control" value="0" disabled id="subtotal_' + productId + '"/></td>' +
+            '<td><input type="number" value=' + amount * priceperpiece + ' class="form-control" value="0" disabled name="subtotal" id="subtotal_' + productId + '"/></td>' +
             '<td>' + iconText + '</td>' +
             '</tr>';
         $("#form-product-body").append(row);
+        refreashTotal();
     }
     function getProductName(id) {
         var name;

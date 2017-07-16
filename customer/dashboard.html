@@ -103,7 +103,6 @@
                 "customerId": id
             };
             post("DeleteCustomer", param, function (data) {
-                console.log("data: " + data);
                 if (data.status == 0) {
                     dangerAlert(data.errorMessage);
                 }
@@ -141,11 +140,9 @@
                     var type;
                     $.each(region, function (j, element) {
                         if (element.id === item.RegionId) {
-                            console.log(element);
                             type = element.name;
                         }
                     });
-                    console.log(item);
                     var iconText = localStorage.getItem("isAdmin") ? '<a class="glyphicon glyphicon-pencil" rhef="" onclick="editCustomer(' + item.id + ')"></a><a class="glyphicon glyphicon-trash" rhef="" onclick="deleteCustomer(' + item.id + ')"></a>' : '';
                     var row = '<tr>' +
                         '<td>' + item.id + '</td>' +
@@ -187,7 +184,6 @@
                     var type;
                     $.each(region, function (j, element) {
                         if (element.id === item.regionId) {
-                            console.log(element);
                             type = element.name;
                         }
                     });
