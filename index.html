@@ -29,7 +29,7 @@
     <script src="component/alert.js"></script>
     <script>
         function login() {
-            var loginForm = $('form#login-form'); 
+            var loginForm = $('form#login-form');
             post("login", loginForm.serialize(), function (data) {
                 if (data.status == 0) {
                     dangerAlert(data.errorMessage);
@@ -52,32 +52,38 @@
         function gotoForgetPwd() {
             window.location.href = 'forgetpassword.html';
         }
-
     </script>
 </head>
 
 <body>
     <div class="container" style="padding:30px;">
-        <h1>เข้าสู่ระบบ</h1>
-        
-            <div class=".col-md-6 .col-md-offset-3">
+
+        <div class="media">
+            <div class="media-left">
+                <a href="#">
+                    <img class="media-object" src="img/logo.png" style="max-width: 500px;" onclick="selectImg()" id="display-img" alt="เพิ่มรูป">
+                </a>
+            </div>
+            <div class="media-body">
                 <form id="login-form" method="post" action="javascript:login();">
                     <div class="row">
-                    <label>ชื่อผู้ใช้งาน: </label><input class="form-control" type="text" name="username" required />
+                        <div class=".col-md-6 .col-md-offset-3">
+                            <label>ชื่อผู้ใช้: </label><input class="form-control" type="text" name="username" required />
+                        </div>
                     </div>
                     <div class="row">
-                    <label>รหัสผ่าน: </label><input type="password" class="form-control" name="password" required />
+                        <label>รหัสผ่าน: </label><input type="password" class="form-control" name="password" required />
                     </div>
                     <div class="row">
-                    <input type="submit" class="btn btn-success" value="เข้าสู่ระบบ" />
-                    <!--<input type="button" style="margin-left: 5px" class="btn" value="สมัครสมาชิก"
+                        <input type="submit" class="btn btn-success" value="เข้าสู่ระบบ" />
+                        <!--<input type="button" style="margin-left: 5px" class="btn" value="สมัครสมาชิก"
                         onclick="gotoRegister()" /><br/>
                     </div>
                     <div class="row">
                     <a href="#" onclick="gotoForgetPwd()">ลืมรหัสผ่าน</a>-->
                     </div>
                 </form>
-            
+            </div>
         </div>
     </div>
     <div id="alert-panel" class="alert-panel">

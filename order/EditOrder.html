@@ -225,8 +225,17 @@
     var customerList;
     $(document).ready(function () {
         loadNav();
-        refreshProduct();
         refreshCustomer();
+        var param = {
+            "token": localStorage.getItem("token"),
+            "userId": localStorage.getItem("userId"),
+            "isAdmin": localStorage.getItem("isAdmin")
+        };
+        post("GetProductList", param, function (data) {
+            productList = data.data;
+        });
+        var id = getParameterByName("id");
+        bindingOrder(id);
     });
     function gotoDashBoard() {
         window.location.href = 'dashboard.html';
@@ -310,12 +319,13 @@
             }
         });
     }
-    function refreshProduct() {
+    function refreshProduct(customerId) {
         $("#product-body tr").remove();
         var param = {
             "token": localStorage.getItem("token"),
             "userId": localStorage.getItem("userId"),
-            "isAdmin": localStorage.getItem("isAdmin")
+            "isAdmin": localStorage.getItem("isAdmin"),
+            "customerId": customerId
         };
         post("GetProductTypeList", param, function (data1) {
             productType = data1.data;
@@ -332,8 +342,9 @@
                     name: "productTypeName"
                 }));
             });
-            post("GetProductList", param, function (data) {
+            post("GetProductListByCustomerId", param, function (data) {
                 productList = data.data;
+                $("#product-body tr").remove();
                 $.each(data.data, function (i, item) {
                     var type;
                     $.each(productType, function (j, element) {
@@ -341,7 +352,7 @@
                             type = element.name;
                         }
                     });
-                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;)">' +
+                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;,' + item.price + ')">' +
                         '<td>' + item.id + '</td>' +
                         '<td>' + item.Name + '</td>' +
                         '<td>' + type + '</td>' +
@@ -349,8 +360,6 @@
                         '</tr>';
                     $("#product-body").append(row);
                 });
-                var id = getParameterByName("id");
-                bindingOrder(id);
             });
         });
     }
@@ -366,10 +375,14 @@
         var isAdmin = $("<input>")
             .attr("type", "hidden")
             .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        var customerId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "customerId").val($("input[name=customerId]").val());
+        form.append(customerId);
         form.append(token);
         form.append(userId);
         form.append(isAdmin);
-        post("SearchProduct", form.serialize(), function (data) {
+        post("SearchProductByCustomerId", form.serialize(), function (data) {
             if (data.status == 0) {
                 dangerAlert(data.errorMessage);
             }
@@ -396,7 +409,7 @@
             }
         });
     }
-    function addProductToForm(id, name) {
+    function addProductToForm(id, name, price) {
         var IsExist = false;
         $.each($("#form-product-body tr"), function (i, row) {
             var td = row.getElementsByTagName("td")[0];
@@ -411,7 +424,7 @@
             var row = '<tr >' +
                 '<td><input type="hidden" name="productId[]"  value="' + id + '"/><input type="hidden" name="orderDetailId[]" value="0"/>' + id + '</td>' +
                 '<td>' + name + '</td>' +
-                '<td><input type="number" min="0" class="form-control" value="0" onchange="sumSubTotal(' + id + ')" id="priceperpiece_' + id + '" name="priceperpiece[]"/></td>' +
+                '<td><input type="number" min="0" class="form-control" value="' + price + '" onchange="sumSubTotal(' + id + ')" id="priceperpiece_' + id + '" name="priceperpiece[]"/></td>' +
                 '<td><input type="number" min="0" class="form-control" value="0" onchange="sumSubTotal(' + id + ')" id="amount_' + id + '" name="amount[]"/></td>' +
                 '<td><input type="number" class="form-control" value="0" name="subtotal" disabled id="subtotal_' + id + '"/></td>' +
                 '<td>' + iconText + '</td>' +
@@ -482,6 +495,7 @@
             $.each(response.data, function (i, item) {
                 $("input[name=customerId]").each(function () {
                     this.value = item.id;
+                    if (i == 0) refreshProduct(item.id);
                 });
                 $("input[name=customerName]").each(function () {
                     this.value = item.name;
@@ -526,7 +540,7 @@
         $("input[name=subtotal]").each(function () {
             sum += parseInt(this.value);
         });
-        
+
         $("#total").attr("value", sum);
     }
     function bindingOrder(id) {

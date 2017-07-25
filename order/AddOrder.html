@@ -89,13 +89,13 @@
                     <input type="text" class="form-control" name="phone" readonly required />
                 </div>
             </div>
-            <div class="row">
+            <div class="row product" style="display:none">
                 <div class="col-md-12">
                     <br>
                     <input type="button" class="btn btn-success" style="float:right;" value="เลือกสินค้า" onclick="openProductPanel()" />
                 </div>
             </div>
-            <div class="row">
+            <div class="row product" style="display:none">
                 <div class="col-md-12">
                     <table class="table">
                         <thead class="">
@@ -223,7 +223,6 @@
     var productType;
     $(document).ready(function () {
         loadNav();
-        refreshProduct();
         refreshCustomer();
     });
     function gotoDashBoard() {
@@ -283,6 +282,7 @@
         var isAdmin = $("<input>")
             .attr("type", "hidden")
             .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+
         form.append(token);
         form.append(userId);
         form.append(isAdmin);
@@ -305,18 +305,19 @@
                         '<td>' + item.Name + '</td>' +
                         '<td>' + type + '</td>' +
                         '<td>' + item.phone + '</td>' +
-                    '</tr>';
+                        '</tr>';
                     $("#customer-body").append(row);
                 });
             }
         });
     }
-    function refreshProduct() {
+    function refreshProduct(customerid) {
         $("#product-body tr").remove();
         var param = {
             "token": localStorage.getItem("token"),
             "userId": localStorage.getItem("userId"),
-            "isAdmin": localStorage.getItem("isAdmin")
+            "isAdmin": localStorage.getItem("isAdmin"),
+            "customerId": customerid
         };
         post("GetProductTypeList", param, function (data1) {
             productType = data1.data;
@@ -333,7 +334,8 @@
                     name: "productTypeName"
                 }));
             });
-            post("GetProductList", param, function (data) {
+            post("GetProductListByCustomerId", param, function (data) {
+                $("#product-body tr").remove();
                 $.each(data.data, function (i, item) {
                     var type;
                     $.each(productType, function (j, element) {
@@ -342,7 +344,7 @@
                             type = element.name;
                         }
                     });
-                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;)">' +
+                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.name + '&#39;,' + item.price + ')">' +
                         '<td>' + item.id + '</td>' +
                         '<td>' + item.Name + '</td>' +
                         '<td>' + type + '</td>' +
@@ -365,10 +367,14 @@
         var isAdmin = $("<input>")
             .attr("type", "hidden")
             .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        var customerId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "customerId").val($("input[name=customerId]").val());
+        form.append(customerId);
         form.append(token);
         form.append(userId);
         form.append(isAdmin);
-        post("SearchProduct", form.serialize(), function (data) {
+        post("SearchProductByCustomerId", form.serialize(), function (data) {
             if (data.status == 0) {
                 dangerAlert(data.errorMessage);
             }
@@ -384,7 +390,7 @@
                         }
                     });
 
-                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.name + '&#39;)">' +
+                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.name + '&#39;,' + item.price + ')">' +
                         '<td>' + item.id + '</td>' +
                         '<td>' + item.name + '</td>' +
                         '<td>' + type + '</td>' +
@@ -395,7 +401,7 @@
             }
         });
     }
-    function addProductToForm(id, name) {
+    function addProductToForm(id, name, price) {
         var IsExist = false;
         $.each($("#form-product-body tr"), function (i, row) {
             var td = row.getElementsByTagName("td")[0];
@@ -407,10 +413,10 @@
         });
         if (!IsExist) {
             var iconText = localStorage.getItem("isAdmin") ? '<a class="glyphicon glyphicon-trash" rhef="" onclick="deleteProduct(' + id + ')"></a>' : '';
-            var row = '<tr >' +
+            var row = '<tr>' +
                 '<td><input type="hidden" name="productId[]"  value="' + id + '"/>' + id + '</td>' +
                 '<td>' + name + '</td>' +
-                '<td><input type="number" min="0" class="form-control" value="0" onchange="sumSubTotal(' + id + ')" id="priceperpiece_' + id + '" name="priceperpiece[]"/></td>' +
+                '<td><input type="number" min="0" class="form-control" value="' + price + '" onchange="sumSubTotal(' + id + ')" id="priceperpiece_' + id + '" name="priceperpiece[]"/></td>' +
                 '<td><input type="number" min="0" class="form-control" value="0" onchange="sumSubTotal(' + id + ')" id="amount_' + id + '" name="amount[]"/></td>' +
                 '<td><input type="number" class="form-control" value="0" name="subtotal" disabled id="subtotal_' + id + '"/></td>' +
                 '<td>' + iconText + '</td>' +
@@ -478,6 +484,7 @@
                 console.log(item);
                 $("input[name=customerId]").each(function () {
                     this.value = item.id;
+                    if (i == 0) refreshProduct(item.id);
                 });
                 $("input[name=customerName]").each(function () {
                     this.value = item.name;
@@ -509,8 +516,10 @@
                 $("#region-selector option[value=" + item.RegionId + "]").attr('selected', 'selected');
                 //$("#display-img").attr("src", item.ImageUrl);
                 //$("#input-file").val(item.ImageUrl);
+
             });
         });
+        $(".product").css("display", "block");
         hideCustomerPanel();
     }
     function sumSubTotal(id) {
