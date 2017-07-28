@@ -390,16 +390,13 @@
                             type = element.name;
                         }
                     });
-                    var iconText = '<a class="glyphicon glyphicon-trash" rhef="" onclick="deleteProduct(' + item.id + ')"></a>';
-                    var row = '<tr >' +
-                        '<td><input type="hidden" name="productId[]"  value="' + item.id + '"/>' + item.id + '<input type="hidden" name="orderDetailId[]" value="0"/></td>' +
-                        '<td>' + item.Name + '</td>' +
-                        '<td><input type="number" class="form-control" value="0" onchange="sumSubTotal(' + item.id + ')" id="priceperpiece_' + item.id + '" name="priceperpiece[]"/></td>' +
-                        '<td><input type="number" class="form-control" value="0" onchange="sumSubTotal(' + item.id + ')" id="amount_' + item.id + '" name="amount[]"/></td>' +
-                        '<td><input type="number" class="form-control" value="0" disabled name="subtotal" id="subtotal_' + item.id + '"/></td>' +
-                        '<td>' + iconText + '</td>' +
+                     var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;,' + item.price + ')">' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.name + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.amount + '</td>' +
                         '</tr>';
-                    $("#form-product-body").append(row);
+                    $("#product-body").append(row);
                 });
             }
         });
