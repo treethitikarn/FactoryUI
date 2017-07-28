@@ -36,12 +36,6 @@
     <div id="nav"></div>
     <div class="container">
         <h1 class="hide-print">แก้ไขคำสั่งซื้อ</h1>
-        <div class="row">
-            <div class="col-md-12">
-                <input type="button" class="btn btn-success hide-print" style="float:right;" value="เลือกลูกค้า" onclick="openCustomerPanel()"
-                />
-            </div>
-        </div>
         <form id="add-amount-form" class=".col-md-6 .col-md-offset-3" method="post" action="javascript:EditOrder();">
             <div class="row">
                 <div class="col-md-12">
@@ -483,6 +477,7 @@
                 }
             }
         });
+        refreashTotal();
     }
     function bindingCustomer(id) {
         var param = {
