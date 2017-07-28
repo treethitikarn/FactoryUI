@@ -337,7 +337,7 @@
         $.each($("#form-product-body tr"), function (i, row) {
             var td = row.getElementsByTagName("td")[0];
             if (td) {
-                if (td.getElementsByTagName("input")[0].value == customerProductPriceId) {
+                if (td.getElementsByTagName("input")[0].value == id) {
                     IsExist = true;
                 }
             }
@@ -345,7 +345,7 @@
         if (!IsExist) {
             var iconText = localStorage.getItem("isAdmin") ? '<a class="glyphicon glyphicon-trash" rhef="" onclick="deleteProduct(' + id + ')"></a>' : '';
             var row = '<tr >' +
-                '<td><input type="hidden" name="customerProductPriceId[]"  value="' + customerProductPriceId + '"/><input type="hidden" name="productId[]"  value="' + id + '"/>' + id + '</td>' +
+                '<td><input type="hidden" name="productId[]"  value="' + id + '"/>' + id + '</td><input type="hidden" name="customerProductPriceId[]"  value="' + customerProductPriceId + '"/>' +
                 '<td>' + name + '</td>' +
                 '<td><input type="number" min="0" class="form-control" value="' + value + '" id="priceperpiece_' + id + '" name="price[]"/></td>' +
 
