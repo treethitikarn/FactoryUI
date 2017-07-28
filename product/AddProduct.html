@@ -135,6 +135,7 @@
 		$('#input-file').attr("src", path);
     });
     function addProduct() {
+        console.log("AddProduct");
         var form = $('form#product-form');
         $('form#form#product-form input[type="hidden"]').remove();
         var token = $("<input>")
@@ -149,6 +150,7 @@
         form.append(token);
         form.append(userId);
         form.append(isAdmin);
+        console.log(form);
         postImage("AddNewProduct", new FormData(form[0]), function (data) {
             console.log("TT");
             if (data.status == 1) window.location.href = 'dashboard.html';
