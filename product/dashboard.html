@@ -298,6 +298,7 @@
                 name: "productTypeName"
             }));
             $("#product-category-body tr").remove();
+            $("select#category-selector option").remove();
             $.each(data1.data, function (i, item) {
                 $('select#category-selector').append($('<option>', {
                     value: item.id,
