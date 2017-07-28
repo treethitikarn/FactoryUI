@@ -322,6 +322,7 @@
             "customerId": customerId
         };
         post("GetProductTypeList", param, function (data1) {
+            $('select#category-selector option').remove();
             productType = data1.data;
             $('select#category-selector').append($('<option>', {
                 value: "",
