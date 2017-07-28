@@ -150,7 +150,7 @@
         form.append(userId);
         form.append(isAdmin);
         postImage("AddNewProduct", new FormData(form[0]), function (data) {
-            if (response.status == 1) window.location.href = 'dashboard.html';
+            if (data.status == 1) window.location.href = 'dashboard.html';
         });
     }
 
