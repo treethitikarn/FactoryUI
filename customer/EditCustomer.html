@@ -373,7 +373,49 @@
             }
         });
     }
-
+function search() {
+        var form = $('form#search-form');
+        $('form#search-form input[type="hidden"]').remove();
+        var token = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "token").val(localStorage.getItem('token'));
+        var userId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "userId").val(localStorage.getItem('userId'));
+        var isAdmin = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "isAdmin").val(localStorage.getItem('isAdmin'));
+        var customerId = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", "customerId").val($("input[name=customerId]").val());
+        form.append(customerId);
+        form.append(token);
+        form.append(userId);
+        form.append(isAdmin);
+        post("SearchProduct", form.serialize(), function (data) {
+            if (data.status == 0) {
+                dangerAlert(data.errorMessage);
+            }
+            else {
+                $("#product-body tr").remove();
+                $.each(data.data, function (i, item) {
+                    var type;
+                    $.each(productType, function (j, element) {
+                        if (element.id === item.ProductTypeId) {
+                            type = element.name;
+                        }
+                    });
+                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;,0,0)">' +
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.mame + '</td>' +
+                        '<td>' + type + '</td>' +
+                        '<td>' + item.amount + '</td>' +
+                        '</tr>';
+                    $("#product-body").append(row);
+                });
+            }
+        });
+    }
 </script>
 
 </html>
