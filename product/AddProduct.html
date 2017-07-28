@@ -151,7 +151,8 @@
         form.append(isAdmin);
         postImage("AddNewProduct", new FormData(form[0]), function (data) {
             console.log(data.status);
-            if (data.status == 1) window.location.href = 'dashboard.html';
+            // if (data.status == 1) 
+            window.location.href = 'dashboard.html';
         });
     }
 
