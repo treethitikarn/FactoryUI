@@ -56,33 +56,35 @@
 </head>
 
 <body>
-    <div class="container" style="padding:30px;">
+    <div class="container" style="top:0; bottom: 0; left:0; right:0; position: absolute;">
 
-        <div class="media">
+        <div class="media" style="top:0; bottom: 0; left:0; right:0; position: absolute;">
             <div class="media-left">
-                <a href="#">
-                    <img class="media-object" src="img/logo.png" style="max-width: 500px;" onclick="selectImg()" id="display-img" alt="เพิ่มรูป">
-                </a>
+                <img class="media-object" src="img/logo.png" style="max-width: 500px;" onclick="selectImg()" id="display-img" alt="เพิ่มรูป">
             </div>
             <div class="media-body">
-                <form id="login-form" method="post" action="javascript:login();">
-                    <div class="row">
-                        <div class=".col-md-6 .col-md-offset-3">
-                            <label>ชื่อผู้ใช้: </label><input class="form-control" type="text" name="username" required />
+                <div style="margin:50% 0">
+                    <form id="login-form" method="post" action="javascript:login();">
+                        <div class="row">
+                            <div class=".col-md-6 .col-md-offset-3">
+                                <label>ชื่อผู้ใช้: </label><input class="form-control" type="text" name="username" required
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <label>รหัสผ่าน: </label><input type="password" class="form-control" name="password" required />
-                    </div>
-                    <div class="row">
-                        <input type="submit" class="btn btn-success" value="เข้าสู่ระบบ" />
-                        <!--<input type="button" style="margin-left: 5px" class="btn" value="สมัครสมาชิก"
+                        <div class="row">
+                            <label>รหัสผ่าน: </label><input type="password" class="form-control" name="password" required
+                            />
+                        </div>
+                        <div class="row">
+                            <input type="submit" class="btn btn-success" value="เข้าสู่ระบบ" />
+                            <!--<input type="button" style="margin-left: 5px" class="btn" value="สมัครสมาชิก"
                         onclick="gotoRegister()" /><br/>
                     </div>
                     <div class="row">
                     <a href="#" onclick="gotoForgetPwd()">ลืมรหัสผ่าน</a>-->
-                    </div>
-                </form>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
