@@ -227,9 +227,11 @@
         };
         post("GetProductList", param, function (data) {
             productList = data.data;
-        });
-        var id = getParameterByName("id");
+            var id = getParameterByName("id");
         bindingOrder(id);
+        });
+        // var id = getParameterByName("id");
+        // bindingOrder(id);
     });
     function gotoDashBoard() {
         window.location.href = 'dashboard.html';
@@ -559,6 +561,10 @@
 
     }
     function bindingProductToTable(productId, amount, priceperpiece, orderDetailId) {
+        console.log(productId);
+        console.log(amount);
+        console.log(priceperpiece);
+        console.log(orderDetailId);
         var name = getProductName(productId);
         var iconText = '<a class="glyphicon glyphicon-trash" rhef="" onclick="deleteProduct(' + productId + ')"></a>';
         var row = '<tr >' +
@@ -573,6 +579,7 @@
         refreashTotal();
     }
     function getProductName(id) {
+        console.log(productList);
         var name;
         $.each(productList, function (i, item) {
             if (item.id == id) {

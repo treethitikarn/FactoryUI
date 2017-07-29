@@ -338,10 +338,16 @@
             post("GetProductListByCustomerId", param, function (data) {
                 $("#product-body tr").remove();
                 $.each(data.data, function (i, item) {
+                    $("#form-product-body input[type=hidden]").each(function () {
+                        if (this.value == item.id) {
+                            var priceId = "priceperpiece_" + this.value;
+                            document.getElementById(priceId).value = item.price;
+                        }
+                    });
+                    sumSubTotal(item.id);
                     var type;
                     $.each(productType, function (j, element) {
                         if (element.id === item.ProductTypeId) {
-                            console.log(element);
                             type = element.name;
                         }
                     });
@@ -485,7 +491,6 @@
         };
         post("GetCustomerById", param, function (response) {
             $.each(response.data, function (i, item) {
-                console.log(item);
                 $("input[name=customerId]").each(function () {
                     this.value = item.id;
                     if (i == 0) refreshProduct(item.id);

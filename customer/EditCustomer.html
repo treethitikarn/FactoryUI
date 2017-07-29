@@ -299,6 +299,7 @@
         };
         post("GetProductTypeList", param, function (data1) {
             productType = data1.data;
+            $("select#category-selector option").remove();
             $('select#category-selector').append($('<option>', {
                 value: "",
                 text: "ทุกหมวดหมู่",
