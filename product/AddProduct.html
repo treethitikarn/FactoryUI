@@ -36,13 +36,13 @@
     <div id="nav"></div>
     <div class="container">
         <h1>เพิ่มสินค้า</h1>
-        <div class="media">
-            <div class="media-left">
+        <div class="row">
+            <div class="col-sm-6">
                 <a href="#">
-                    <img class="media-object" src="../img/default_img.png" style="max-width: 500px;" onclick="selectImg()" id="display-img" alt="เพิ่มรูป">
+                    <img class="media-object" src="../img/default_img.png" style="max-width: 100%;" onclick="selectImg()" id="display-img" alt="เพิ่มรูป">
                 </a>
             </div>
-            <div class="media-body">
+            <div class="col-sm-6">
                 <form id="product-form" class=".col-md-6 .col-md-offset-3" method="post" action="javascript:addProduct();">
                     <div class="row">
                         <div class="col-md-12">
@@ -132,7 +132,7 @@
     $('#input-file').change(function () {
         var path = URL.createObjectURL(event.target.files[0]);
         $("#display-img").attr("src", path);
-		$('#input-file').attr("src", path);
+        $('#input-file').attr("src", path);
     });
     function addProduct() {
         var form = $('form#product-form');
