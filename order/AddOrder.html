@@ -338,10 +338,16 @@
             post("GetProductListByCustomerId", param, function (data) {
                 $("#product-body tr").remove();
                 $.each(data.data, function (i, item) {
+                    $("#form-product-body input[type=hidden]").each(function () {
+                        if (this.value == item.id) {
+                            var priceId = "priceperpiece_" + this.value;
+                            document.getElementById(priceId).value = item.price;
+                        }
+                    });
+                    sumSubTotal(item.id);
                     var type;
                     $.each(productType, function (j, element) {
                         if (element.id === item.ProductTypeId) {
-                            console.log(element);
                             type = element.name;
                         }
                     });
@@ -391,11 +397,11 @@
                         }
                     });
 
-                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.name + '&#39;,' + item.price + ')">' +
+                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;,' + item.price + ')">' +
                         '<td>' + item.id + '</td>' +
-                        '<td>' + item.name + '</td>' +
+                        '<td>' + item.Name + '</td>' +
                         '<td>' + type + '</td>' +
-                        '<td>' + item.amount + '</td>' +
+                        '<td>' + item.Amount + '</td>' +
                         '</tr>';
                     $("#product-body").append(row);
                 });
@@ -485,7 +491,6 @@
         };
         post("GetCustomerById", param, function (response) {
             $.each(response.data, function (i, item) {
-                console.log(item);
                 $("input[name=customerId]").each(function () {
                     this.value = item.id;
                     if (i == 0) refreshProduct(item.id);

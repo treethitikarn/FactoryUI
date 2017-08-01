@@ -299,6 +299,7 @@
         };
         post("GetProductTypeList", param, function (data1) {
             productType = data1.data;
+            $("select#category-selector option").remove();
             $('select#category-selector').append($('<option>', {
                 value: "",
                 text: "ทุกหมวดหมู่",
@@ -409,7 +410,7 @@ function search() {
                     });
                     var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;,0,0)">' +
                         '<td>' + item.id + '</td>' +
-                        '<td>' + item.mame + '</td>' +
+                        '<td>' + item.name + '</td>' +
                         '<td>' + type + '</td>' +
                         '<td>' + item.amount + '</td>' +
                         '</tr>';

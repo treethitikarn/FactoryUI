@@ -1,4 +1,4 @@
-var host = "http://localhost:7777/";
+var host = "http://infiniteplasticproducts.xyz:7777/";
 
 
 function post(url, form, func) {

@@ -227,9 +227,11 @@
         };
         post("GetProductList", param, function (data) {
             productList = data.data;
-        });
-        var id = getParameterByName("id");
+            var id = getParameterByName("id");
         bindingOrder(id);
+        });
+        // var id = getParameterByName("id");
+        // bindingOrder(id);
     });
     function gotoDashBoard() {
         window.location.href = 'dashboard.html';
@@ -347,7 +349,7 @@
                             type = element.name;
                         }
                     });
-                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.name + '&#39;,' + item.price + ')">' +
+                    var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;,' + item.price + ')">' +
                         '<td>' + item.id + '</td>' +
                         '<td>' + item.Name + '</td>' +
                         '<td>' + type + '</td>' +
@@ -390,11 +392,11 @@
                             type = element.name;
                         }
                     });
-                     var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.name + '&#39;,' + item.price + ')">' +
+                     var row = '<tr onclick="addProductToForm(' + item.id + ',&#39;' + item.Name + '&#39;,' + item.price + ')">' +
                         '<td>' + item.id + '</td>' +
-                        '<td>' + item.name + '</td>' +
+                        '<td>' + item.Name + '</td>' +
                         '<td>' + type + '</td>' +
-                        '<td>' + item.amount + '</td>' +
+                        '<td>' + item.Amount + '</td>' +
                         '</tr>';
                     $("#product-body").append(row);
                 });
@@ -559,6 +561,10 @@
 
     }
     function bindingProductToTable(productId, amount, priceperpiece, orderDetailId) {
+        console.log(productId);
+        console.log(amount);
+        console.log(priceperpiece);
+        console.log(orderDetailId);
         var name = getProductName(productId);
         var iconText = '<a class="glyphicon glyphicon-trash" rhef="" onclick="deleteProduct(' + productId + ')"></a>';
         var row = '<tr >' +
@@ -573,6 +579,7 @@
         refreashTotal();
     }
     function getProductName(id) {
+        console.log(productList);
         var name;
         $.each(productList, function (i, item) {
             if (item.id == id) {
