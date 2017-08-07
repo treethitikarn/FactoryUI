@@ -11,7 +11,7 @@ function loadNav() {
         '<span class="icon-bar"></span>' +
         '<span class="icon-bar"></span>' +
         '</button>' +
-        '<b class="navbar-brand" href="#">Eagle Stationary</b>' +
+        '<b class="navbar-brand" href="#">CNK Stationary</b>' +
         '</div>' +
         '<!-- Collect the nav links, forms, and other content for toggling -->' +
         '<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">' +
